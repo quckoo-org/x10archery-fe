@@ -145,10 +145,9 @@ jobs:
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
         run: |
-          echo "APPLICATION_NAME=${{ vars.HARBOR_PROJECT_NAME }}" > $GITHUB_ENV
-          sed -i "s/version\:.*/version\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.HARBOR_PROJECT_NAME }}/Chart.yaml
-          sed -i "s/appVersion\:.*/appVersion\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.HARBOR_PROJECT_NAME }}/Chart.yaml
-          helm lint ./.helm/${{ vars.HARBOR_PROJECT_NAME }}
+          sed -i "s/version\:.*/version\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
+          sed -i "s/appVersion\:.*/appVersion\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
+          helm lint ./.helm/${{ vars.APPLICATION_NAME }}
       - 
         name: Push Helm chart
         env:
