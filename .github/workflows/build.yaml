@@ -144,9 +144,10 @@ jobs:
         name: Lint Helm chart
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+          DEFAULT_VERSION_CHART: "0.0.0"
         run: |
-          sed -i "s/version\:.*/version\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
-          sed -i "s/appVersion\:.*/appVersion\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
+          sed -i "s/version\:.*/version\: ${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
+          sed -i "s/appVersion\:.*/appVersion\: ${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
           helm lint ./.helm/${{ vars.APPLICATION_NAME }}
       - 
         name: Push Helm chart
@@ -155,5 +156,5 @@ jobs:
         run: |
           helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password '${{ secrets.HARBOR_ROBOT_TOKEN }}'
           helm package ./.helm/${{ vars.HARBOR_PROJECT_NAME }}
-          helm push ${{ vars.HARBOR_PROJECT_NAME }}-${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.HARBOR_PROJECT_NAME }}-chart
-          rm ${{ vars.HARBOR_PROJECT_NAME }}-${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}.tgz
+          helm push ${{ vars.HARBOR_PROJECT_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.HARBOR_PROJECT_NAME }}-chart
+          rm ${{ vars.HARBOR_PROJECT_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
