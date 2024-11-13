@@ -165,6 +165,7 @@ jobs:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
           CHART_VERSION: ${{ env.DEFAULT_VERSION_CHART }}-${{ steps.short-sha.outputs.sha }}
           ENVIRONMENT: ${{ inputs.environment }}
+          HARBOR_ROBOT_TOKEN: ${{ secrets.HARBOR_ROBOT_TOKEN }}
         run: |
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d > ~/CONFIG
           export KUBECONFIG=~/CONFIG
