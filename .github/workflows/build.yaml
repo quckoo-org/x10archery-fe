@@ -159,6 +159,7 @@ jobs:
           helm package ./.helm/${{ vars.APPLICATION_NAME }}
           helm push ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart
           rm ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
+          helm repo update
       -
         name: Deploy
         env:
