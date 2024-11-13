@@ -6,10 +6,10 @@ on:
       application:
         description: 'Application for deploy'
         required: true
-        default: ${APPLICATION_NAME}
+        default: x10archery-fe
         type: choice
         options:
-          - ${APPLICATION_NAME}
+          - x10archery-fe
       environment:
         type: environment
         required: true
