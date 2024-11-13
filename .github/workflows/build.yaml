@@ -154,7 +154,7 @@ jobs:
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
         run: |
-          helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password '${{ secrets.HARBOR_ROBOT_TOKEN }}'
-          helm package ./.helm/${{ vars.HARBOR_PROJECT_NAME }}
-          helm push ${{ vars.HARBOR_PROJECT_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.HARBOR_PROJECT_NAME }}-chart
-          rm ${{ vars.HARBOR_PROJECT_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
+          echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
+          helm package ./.helm/${{ vars.APPLICATION_NAME }}
+          helm push ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart
+          rm ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
