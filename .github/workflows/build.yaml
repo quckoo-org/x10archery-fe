@@ -153,6 +153,7 @@ jobs:
         name: Push Helm chart
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+          DEFAULT_VERSION_CHART: "0.0.0"
         run: |
           echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
           helm package ./.helm/${{ vars.APPLICATION_NAME }}
