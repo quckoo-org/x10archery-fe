@@ -4,11 +4,11 @@ helmDefaults:
   timeout: 300
 
 repositories:
-   - url: {{ .Values.HARBOR_HOST }}/{{ .Values.HARBOR_PROJECT_NAME }}
-     name: {{ .Values.HARBOR_PROJECT_NAME }}
-     username: {{ .Values.HARBOR_ROBOT_NAME }}
-     password: {{ .Values.HARBOR_ROBOT_TOKEN }}
-     oci: true
+  - url: {{ .Values.HARBOR_HOST }}/{{ .Values.HARBOR_PROJECT_NAME }}
+    name: {{ .Values.HARBOR_PROJECT_NAME }}
+    username: {{ .Values.HARBOR_ROBOT_NAME }}
+    password: {{ requiredEnv "HARBOR_ROBOT_TOKEN" }}
+    oci: true
 
 environments:
   development:
