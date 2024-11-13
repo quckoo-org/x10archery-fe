@@ -5,8 +5,8 @@ helmDefaults:
 
 repositories:
   - url: {{ .Values.HARBOR_HOST }}/{{ .Values.HARBOR_PROJECT_NAME }}
-    name: {{ .Values.HARBOR_PROJECT_NAME }}
-    username: {{ .Values.HARBOR_ROBOT_NAME }}
+    name: {{ .Values.APPLICATION_NAME }}
+    username: '{{ .Values.HARBOR_ROBOT_NAME }}'
     password: {{ requiredEnv "HARBOR_ROBOT_TOKEN" }}
     oci: true
 
