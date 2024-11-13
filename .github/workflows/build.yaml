@@ -130,6 +130,8 @@ jobs:
         image: quay.io/roboll/helmfile:v0.142.0
       env:
         HELM_EXPERIMENTAL_OCI: 1
+        DEFAULT_VERSION_CHART: "0.0.0"
+      environment: ${{ inputs.environment }}
       steps:
       - 
         name: Checkout
@@ -144,7 +146,6 @@ jobs:
         name: Lint Helm chart
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
-          DEFAULT_VERSION_CHART: "0.0.0"
         run: |
           sed -i "s/version\:.*/version\: ${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
           sed -i "s/appVersion\:.*/appVersion\: ${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}/" .helm/${{ vars.APPLICATION_NAME }}/Chart.yaml
@@ -153,9 +154,20 @@ jobs:
         name: Push Helm chart
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
-          DEFAULT_VERSION_CHART: "0.0.0"
         run: |
           echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
           helm package ./.helm/${{ vars.APPLICATION_NAME }}
           helm push ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart
           rm ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
+      -
+        name: Deploy
+        env:
+          SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+          CHART_VERSION: ${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo ${{ secrets.KUBE_CONFIG }} | base64 -d > ~/CONFIG
+          export KUBECONFIG=~/CONFIG
+          helmfile -f .helm/helmfile.yaml -e "${{ env.ENVIRONMENT }}" --state-values-set 
+          "HARBOR_HOST=${{ vars.HARBOR_HOST }}, HARBOR_PROJECT_NAME=${{ vars.HARBOR_PROJECT_NAME }},APPLICATION_NAME=${{ vars.APPLICATION_NAME }}, CHART_VERSION=${{ env.CHART_VERSION }}, K8S_NAMESPACE=${{ vars.K8S_NAMESPACE }},HARBOR_ROBOT_NAME=${{ vars.HARBOR_ROBOT_NAME }},HARBOR_ROBOT_TOKEN=${{ secrets.HARBOR_ROBOT_TOKEN }}" sync
+          echo "Helm chart version: ${{ env.CHART_VERSION }}" >> "$GITHUB_STEP_SUMMARY"
