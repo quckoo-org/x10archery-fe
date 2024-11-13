@@ -1,0 +1,8 @@
+## TODO check it !
+apiVersion: v1
+data:
+  .dockerconfigjson: {{ .Values.imagePull.credentials }}
+kind: Secret
+metadata:
+  name: {{ .Values.imagePull.secretName }}
+type: kubernetes.io/dockerconfigjson
