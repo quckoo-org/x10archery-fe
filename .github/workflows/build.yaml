@@ -120,3 +120,41 @@ jobs:
             "VERSION_TAG=${{ github.ref_name }}"
           push: true
           tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ github.ref_name }}, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest
+
+  helm_prepare_and_push:
+      runs-on: 'ubuntu-latest'
+      if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
+      needs:
+      - image_build_and_push
+      container:
+        image: quay.io/roboll/helmfile:v0.142.0
+      env:
+        HELM_EXPERIMENTAL_OCI: 1
+      steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v3
+      - 
+        name: Get short sha
+        uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 7
+      - 
+        name: Lint Helm chart
+        env:
+          SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+        run: |
+          echo "APPLICATION_NAME=${{ vars.HARBOR_PROJECT_NAME }}" > $GITHUB_ENV
+          sed -i "s/version\:.*/version\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.HARBOR_PROJECT_NAME }}/Chart.yaml
+          sed -i "s/appVersion\:.*/appVersion\: ${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}/" .helm/${{ vars.HARBOR_PROJECT_NAME }}/Chart.yaml
+          helm lint ./.helm/${{ vars.HARBOR_PROJECT_NAME }}
+      - 
+        name: Push Helm chart
+        env:
+          SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+        run: |
+          helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password '${{ secrets.HARBOR_ROBOT_TOKEN }}'
+          helm package ./.helm/${{ vars.HARBOR_PROJECT_NAME }}
+          helm push ${{ vars.HARBOR_PROJECT_NAME }}-${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.HARBOR_PROJECT_NAME }}-chart
+          rm ${{ vars.HARBOR_PROJECT_NAME }}-${DEFAULT_VERSION_CHART}-${{ env.SHORT_SHA }}.tgz
