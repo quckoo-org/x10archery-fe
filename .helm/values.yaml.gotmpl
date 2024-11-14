@@ -1,3 +1,6 @@
+imagePullSecrets:
+  - name: {{ .Values.SECRET_NAME }}-env-{{ .Environment.Name }}
+
 ingress:
   enabled: true
   className: "nginx"

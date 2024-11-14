@@ -23,4 +23,6 @@ releases:
     values:
       - image:
           repository: {{ .Values.HARBOR_HOST | toString }}/{{ .Values.HARBOR_PROJECT_NAME | toString }}/{{ .Values.APPLICATION_NAME | toString }}
+      - imagePullSecrets:
+          - name: {{ .Values.SECRET_NAME }}-env-{{ .Environment.Name }}
       - ./values.yaml.gotmpl
