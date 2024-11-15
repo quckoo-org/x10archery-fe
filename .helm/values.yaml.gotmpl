@@ -19,9 +19,9 @@ ingress:
           pathType: ImplementationSpecific
   tls:
     {{ if eq .Environment.Name "production" }}
-    - secretName: chart-application-prod-tls
+    - secretName: letsencrypt-x10archery-fe-prod-tls
     {{else}}
-    - secretName: chart-application-dev-tls
+    - secretName: letsencrypt-x10archery-fe-dev-tls
     {{end}}
       hosts:
         {{ if eq .Environment.Name "production" }}
