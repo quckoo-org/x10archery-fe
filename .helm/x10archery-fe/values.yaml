@@ -96,5 +96,3 @@ readinessProbe:
   successThreshold: 1
 
 startupProbe: {}
-
-certManager: []
