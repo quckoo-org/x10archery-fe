@@ -6,7 +6,7 @@ helmDefaults:
 repositories:
   - url: {{ .Values.HARBOR_HOST | toString }}/{{ .Values.HARBOR_PROJECT_NAME | toString }}
     name: {{ .Values.APPLICATION_NAME | toString }}
-    username: {{ .Values.HARBOR_ROBOT_NAME | toString }}
+    username: {{ .Values.HARBOR_ROBOT_NAME | quote }}
     password: {{ requiredEnv "HARBOR_ROBOT_TOKEN" }}
     oci: true
 
