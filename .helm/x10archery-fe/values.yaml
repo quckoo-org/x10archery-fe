@@ -11,7 +11,7 @@ fullnameOverride: ""
 
 imagePull:
   credentials: ""
-  secretName: ""
+  secretName: "x10archerysecret"
 
 serviceAccount:
   create: false
