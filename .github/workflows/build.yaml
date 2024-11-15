@@ -62,6 +62,8 @@ jobs:
   image_build_and_push:
     runs-on: 'ubuntu-latest'
     if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
+    outputs:
+      short_sha: ${{ steps.short_sha_step.outputs.short_sha }}
     needs:
       - check_enviroment
     steps:
