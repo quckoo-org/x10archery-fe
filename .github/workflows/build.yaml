@@ -84,7 +84,7 @@ jobs:
       - name: Set [SHORT_SHA] in [GITHUB_ENV]
         run: |
           echo "SHORT_SHA=${{ steps.short_sha_step.outputs.sha }}" >> $GITHUB_ENV
-          echo "SHORT_SHA set up to [${{ env.SHORT_SHA }}]" >> "$GITHUB_STEP_SUMMARY"
+          echo "SHORT_SHA set up to [${{ steps.short_sha_step.outputs.sha }}]" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build and push Docker image [Development version]
         if: ${{ inputs.environment == 'development' && github.ref_type != 'tag' }}
