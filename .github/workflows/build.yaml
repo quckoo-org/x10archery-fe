@@ -166,7 +166,7 @@ jobs:
       needs:
       - helm_prepare_and_push
       container:
-        image: quay.io/roboll/helmfile:v0.142.0
+        image: ghcr.io/helmfile/helmfile:v0.157.0
       env:
         HELM_EXPERIMENTAL_OCI: 1
         DEFAULT_VERSION_CHART: "0.0.0"
