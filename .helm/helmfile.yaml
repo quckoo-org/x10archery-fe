@@ -25,5 +25,5 @@ releases:
           repository: {{ .Values.HARBOR_HOST | toString }}/{{ .Values.HARBOR_PROJECT_NAME | toString }}/{{ .Values.APPLICATION_NAME | toString }}
           tag: {{ .Values.IMAGE_TAG | toString }}
       - imagePullSecrets:
-          - name: x10archerysecret
+          - name: {{ .Values.SECRET_NAME | toString }}
       - ./values.yaml.gotmpl
