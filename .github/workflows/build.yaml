@@ -98,9 +98,9 @@ jobs:
           username: ${{ vars.HARBOR_ROBOT_NAME }}
           password: ${{ secrets.HARBOR_ROBOT_TOKEN }}
 
-      -
+      - 
         name: Get short sha
-        uses: docker/build-push-action@v4
+        uses: benjlevesque/short-sha@v2.1
         id: short-sha
         with:
           length: 7
@@ -144,7 +144,7 @@ jobs:
         uses: actions/checkout@v3
       - 
         name: Get short sha
-        uses: docker/build-push-action@v4
+        uses: benjlevesque/short-sha@v2.1
         id: short-sha
         with:
           length: 7
@@ -183,7 +183,7 @@ jobs:
         uses: actions/checkout@v3
       - 
         name: Get short sha
-        uses: docker/build-push-action@v4
+        uses: benjlevesque/short-sha@v2.1
         id: short-sha
         with:
           length: 7
