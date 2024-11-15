@@ -96,6 +96,7 @@ jobs:
             "BRANCH_NAME=${{ github.ref_name }}"
           push: true
           tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ env.SHORT_SHA }}-dev, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest-dev
+
       - name: Build and push Docker image [Production version]
         if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
         uses: docker/build-push-action@v4
@@ -130,6 +131,7 @@ jobs:
           echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
           helm package ./.helm/${{ vars.APPLICATION_NAME }}
           helm push ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart
+          echo "Chart [${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz] pushed as [oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart]" >> "$GITHUB_STEP_SUMMARY"
           rm ${{ vars.APPLICATION_NAME }}-${{ env.DEFAULT_VERSION_CHART }}-${{ env.SHORT_SHA }}.tgz
 
   deploy:
@@ -156,4 +158,5 @@ jobs:
           export KUBECONFIG=~/CONFIG
           echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
           helmfile -f .helm/helmfile.yaml -e "${{ env.ENVIRONMENT }}" --state-values-set "HARBOR_HOST=${{ vars.HARBOR_HOST }},HARBOR_PROJECT_NAME=${{ vars.HARBOR_PROJECT_NAME }},APPLICATION_NAME=${{ vars.APPLICATION_NAME }},CHART_VERSION=${{ env.CHART_VERSION }},IMAGE_TAG=${{ env.IMAGE_TAG }},K8S_NAMESPACE=${{ vars.K8S_NAMESPACE }},HARBOR_ROBOT_NAME=${{ vars.HARBOR_ROBOT_NAME }},HARBOR_ROBOT_TOKEN=${{ secrets.HARBOR_ROBOT_TOKEN }},SECRET_NAME=${{ vars.SECRET_NAME }}" sync
-          echo "Helm chart version: ${{ env.CHART_VERSION }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Helm chart version: [${{ env.CHART_VERSION }}]" >> "$GITHUB_STEP_SUMMARY"
+          echo "Image version: [${{ env.IMAGE_TAG }}]" >> "$GITHUB_STEP_SUMMARY"
