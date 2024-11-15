@@ -63,7 +63,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
     outputs:
-      short_sha: ${{ steps.short_sha_step.outputs.short_sha }}
+      short_sha: ${{ steps.short_sha_step.outputs.sha }}
     needs:
       - check_enviroment
     steps:
@@ -86,7 +86,7 @@ jobs:
       - name: Set [short_sha] in [GITHUB_OUTPUT]
         run: |
           echo "short_sha=${{ steps.short_sha_step.outputs.sha }}" >> $GITHUB_ENV
-          echo "short_sha=${{ steps.short_sha_step.outputs.sha }}" >> $GITHUB_OUTPUT
+          echo "sha=${{ steps.short_sha_step.outputs.sha }}" >> $GITHUB_OUTPUT
           echo "short_sha set up to [${{ steps.short_sha_step.outputs.sha }}]" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build and push Docker image [Development version]
