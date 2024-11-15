@@ -96,10 +96,3 @@ readinessProbe:
   successThreshold: 1
 
 startupProbe: {}
-
-certManager:
-  email: "alexanderdolgosheev@gmail.com"
-  server: "https://acme-v02.api.letsencrypt.org/directory"
-  ingressClass: "nginx"
-
-namespace: x10-archery
