@@ -27,21 +27,13 @@ defaults:
 
 jobs:
   choose_enviroment:
-    runs-on: self-hosted
-    container:
-      image: alpine:latest
+    runs-on: 'ubuntu-latest'
+    if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
     steps:
-      - name: Install dependencies
-        run: |
-          apk add --no-cache git curl bash
       - name: Checkout
         uses: actions/checkout@v3
       - name: namespaces
         id: chosen_namespace
-        run: |
-          echo "production=${{ vars.PRODUCTION_NS }}" >> $GITHUB_ENV
-          echo "development=${{ vars.DEVELOPMENT_NS }}" >> $GITHUB_ENV
-      - name: Set environment variables for outputs
         run: |
           echo "production=${{ vars.PRODUCTION_NS }}" >> $GITHUB_ENV
           echo "development=${{ vars.DEVELOPMENT_NS }}" >> $GITHUB_ENV
