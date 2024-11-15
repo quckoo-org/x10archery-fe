@@ -5,7 +5,9 @@ image:
   pullPolicy: IfNotPresent
   tag: ""
 
-imagePullSecrets: []
+imagePullSecrets: 
+  - name: "x10archerysecret"
+
 nameOverride: ""
 fullnameOverride: ""
 
