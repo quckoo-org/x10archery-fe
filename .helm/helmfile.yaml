@@ -22,7 +22,8 @@ releases:
     chart: {{ .Values.APPLICATION_NAME | toString }}/{{ .Values.APPLICATION_NAME | toString }}-chart/{{ .Values.APPLICATION_NAME | toString }}
     values:
       - image:
-          repository: {{ .Values.HARBOR_HOST | toString }}/{{ .Values.HARBOR_PROJECT_NAME | toString }}/{{ .Values.APPLICATION_NAME | toString }}:{{ .Values.IMAGE_TAG | toString }}
+          repository: {{ .Values.HARBOR_HOST | toString }}/{{ .Values.HARBOR_PROJECT_NAME | toString }}/{{ .Values.APPLICATION_NAME | toString }}
+          tag: {{ .Values.IMAGE_TAG | toString }}
       - imagePullSecrets:
           - name: x10archerysecret
       - ./values.yaml.gotmpl
