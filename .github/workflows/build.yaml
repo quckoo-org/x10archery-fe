@@ -186,6 +186,7 @@ jobs:
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
           CHART_VERSION: ${{ env.DEFAULT_VERSION_CHART }}-${{ steps.short-sha.outputs.sha }}
+          IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}-dev
           ENVIRONMENT: ${{ inputs.environment }}
           SECRET_NAME: ${{ vars.SECRET_NAME }}
           HARBOR_ROBOT_TOKEN: ${{ secrets.HARBOR_ROBOT_TOKEN }}
@@ -193,5 +194,5 @@ jobs:
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d > ~/CONFIG
           export KUBECONFIG=~/CONFIG
           echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
-          helmfile -f .helm/helmfile.yaml -e "${{ env.ENVIRONMENT }}" --state-values-set "HARBOR_HOST=${{ vars.HARBOR_HOST }},HARBOR_PROJECT_NAME=${{ vars.HARBOR_PROJECT_NAME }},APPLICATION_NAME=${{ vars.APPLICATION_NAME }},CHART_VERSION=${{ env.CHART_VERSION }},K8S_NAMESPACE=${{ vars.K8S_NAMESPACE }},HARBOR_ROBOT_NAME=${{ vars.HARBOR_ROBOT_NAME }},HARBOR_ROBOT_TOKEN=${{ secrets.HARBOR_ROBOT_TOKEN }},SECRET_NAME=${{ vars.SECRET_NAME }}" sync
+          helmfile -f .helm/helmfile.yaml -e "${{ env.ENVIRONMENT }}" --state-values-set "HARBOR_HOST=${{ vars.HARBOR_HOST }},HARBOR_PROJECT_NAME=${{ vars.HARBOR_PROJECT_NAME }},APPLICATION_NAME=${{ vars.APPLICATION_NAME }},CHART_VERSION=${{ env.CHART_VERSION }},IMAGE_TAG=${{ env.IMAGE_TAG }},K8S_NAMESPACE=${{ vars.K8S_NAMESPACE }},HARBOR_ROBOT_NAME=${{ vars.HARBOR_ROBOT_NAME }},HARBOR_ROBOT_TOKEN=${{ secrets.HARBOR_ROBOT_TOKEN }},SECRET_NAME=${{ vars.SECRET_NAME }}" sync
           echo "Helm chart version: ${{ env.CHART_VERSION }}" >> "$GITHUB_STEP_SUMMARY"
