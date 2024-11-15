@@ -164,5 +164,3 @@ jobs:
           helmfile -f .helm/helmfile.yaml -e "${{ env.ENVIRONMENT }}" --state-values-set "HARBOR_HOST=${{ vars.HARBOR_HOST }},HARBOR_PROJECT_NAME=${{ vars.HARBOR_PROJECT_NAME }},APPLICATION_NAME=${{ vars.APPLICATION_NAME }},CHART_VERSION=${{ env.CHART_VERSION }},IMAGE_TAG=${{ env.IMAGE_TAG }},K8S_NAMESPACE=${{ vars.K8S_NAMESPACE }},HARBOR_ROBOT_NAME=${{ vars.HARBOR_ROBOT_NAME }},HARBOR_ROBOT_TOKEN=${{ secrets.HARBOR_ROBOT_TOKEN }},SECRET_NAME=${{ vars.SECRET_NAME }}" sync
           echo "Chart version: [${{ env.CHART_VERSION }}]" >> "$GITHUB_STEP_SUMMARY"
           echo "Image version: [${{ env.IMAGE_TAG }}]" >> "$GITHUB_STEP_SUMMARY"
-          echo "helm pull oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart/${{ vars.APPLICATION_NAME }} --version ${{ CHART_VERSION }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "helm install ${{ vars.APPLICATION_NAME }} oci://${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}-chart/${{ vars.APPLICATION_NAME }} --version ${{ CHART_VERSION }} --namespace ${{ vars.K8S_NAMESPACE }}" >> "$GITHUB_STEP_SUMMARY"
