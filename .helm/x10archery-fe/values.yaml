@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: harbor.quckoo.net/x10-archery/x10archery-fe
+  repository: registry.quckoo.net/x10-archery/x10archery-fe
   pullPolicy: IfNotPresent
   tag: ""
 
