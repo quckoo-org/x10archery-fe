@@ -77,13 +77,13 @@ jobs:
 
       - name: Get short sha
         uses: benjlevesque/short-sha@v2.1
-        id: short-sha
+        id: short_sha_step
         with:
           length: 7
 
       - name: Set [SHORT_SHA] in [GITHUB_ENV]
         run: |
-          echo "SHORT_SHA=${{ steps.short-sha.outputs.sha }}" >> $GITHUB_ENV
+          echo "SHORT_SHA=${{ steps.short_sha_step.outputs.sha }}" >> $GITHUB_ENV
           echo "SHORT_SHA set up to [${{ env.SHORT_SHA }}]" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build and push Docker image [Development version]
