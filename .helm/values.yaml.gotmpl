@@ -29,3 +29,15 @@ ingress:
         {{else}}
         - x10club.ru
         {{end}}
+
+certManager:
+  {{ if eq .Environment.Name "production" }}
+  issuerName: "letsencrypt-x10archery-prod"
+  privateKeySecret: "x10archery-prod-issuer-account-key"  
+  {{else}}
+  issuerName: "letsencrypt-x10archery-dev"
+  privateKeySecret: "x10archery-dev-issuer-account-key"
+  {{end}}
+  email: "alexanderdolgosheev@gmail.com"
+  server: "https://acme-v02.api.letsencrypt.org/directory"
+  ingressClass: "nginx"
