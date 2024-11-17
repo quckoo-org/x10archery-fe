@@ -9,7 +9,7 @@ const Hero: React.FC = () => {
     return (
         <Container style={{ textAlign: 'center', padding: '80px 0' }}>
             <Title order={1} style={{ fontSize: '48px', marginBottom: '20px' }}>
-                Стрелковый клуб 10
+                Стрелковый клуб X10
             </Title>
             <Text size="lg" color="dimmed" style={{ marginBottom: '30px' }}>
                 Покорите мир стрельбы вместе с нами — от традиционных луков до современных арбалетов
