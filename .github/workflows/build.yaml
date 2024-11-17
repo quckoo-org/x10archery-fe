@@ -64,6 +64,7 @@ jobs:
     if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
     outputs:
       short_sha: ${{ steps.short_sha_step.outputs.sha }}
+      image_version: ${{ steps.set_image_version.outputs.image_version }}
     needs:
       - check_enviroment
     steps:
@@ -100,6 +101,12 @@ jobs:
           push: true
           tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ env.short_sha }}-dev, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest-dev
 
+      - name: Save [Development version] as output
+        if: ${{ inputs.environment == 'development' && github.ref_type != 'tag' }}
+        id: set_image_version
+        run: |
+          echo "image_version=${{ env.short_sha }}-dev" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image [Production version]
         if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
         uses: docker/build-push-action@v4
@@ -110,6 +117,47 @@ jobs:
             "VERSION_TAG=${{ github.ref_name }}"
           push: true
           tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ github.ref_name }}, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest
+
+      - name: Save [Production version] as output
+        if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
+        id: set_image_version
+        run: |
+          echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: Print image version
+        run: |
+          echo "Image version is [${{ steps.set_image_version.outputs.image_version }}]" >> "$GITHUB_STEP_SUMMARY"
+
+  trivy-scan:
+    runs-on: 'ubuntu-latest'
+    if: ${{ always() && !(contains(needs.*.result, 'failure')) && !cancelled() }}
+    needs:
+      - image_build_and_push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Trivy Cache
+        uses: yogeshlonkar/trivy-cache-action@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        id: scan
+        continue-on-error: true
+        env:
+          TRIVY_USERNAME: ${{ vars.DOCKER_USEHARBOR_ROBOT_TOKENRNAME_DEEPLAY }}
+          TRIVY_PASSWORD: ${{ secrets.HARBOR_ROBOT_NAME }}
+        with:
+          image-ref: "${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ needs.image_build_and_push.outputs.image_version }}"
+          output: "trivy-results"
+          cache-dir: .trivy
+
+      - name: Print result
+        if: ${{ steps.scan.conclusion == 'success' }}
+        run: |
+          cat trivy-results >> "$GITHUB_STEP_SUMMARY"
 
   helm_prepare_and_push:
       runs-on: 'ubuntu-latest'
@@ -150,19 +198,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set IMAGE_TAG
-        id: set_image_tag
-        run: |
-          if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref_type }}" == "tag" ]]; then
-            echo "IMAGE_TAG=${{ github.ref_name }}" >> $GITHUB_ENV
-          else
-            echo "IMAGE_TAG=${{ needs.image_build_and_push.outputs.short_sha }}-dev" >> $GITHUB_ENV
-          fi
-
       - name: Deploy
         env:
           CHART_VERSION: ${{ env.DEFAULT_VERSION_CHART }}-${{ needs.image_build_and_push.outputs.short_sha }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          IMAGE_TAG: ${{ needs.image_build_and_push.outputs.image_version }}
           ENVIRONMENT: ${{ inputs.environment }}
           SECRET_NAME: ${{ vars.SECRET_NAME }}
           HARBOR_ROBOT_NAME: ${{ vars.HARBOR_ROBOT_NAME }}
