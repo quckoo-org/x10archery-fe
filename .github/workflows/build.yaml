@@ -103,7 +103,7 @@ jobs:
 
       - name: Save [Development version] as output
         if: ${{ inputs.environment == 'development' && github.ref_type != 'tag' }}
-        id: set_image_version
+        id: set_image_version_dev
         run: |
           echo "image_version=${{ env.short_sha }}-dev" >> $GITHUB_OUTPUT
 
@@ -120,13 +120,17 @@ jobs:
 
       - name: Save [Production version] as output
         if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
-        id: set_image_version
+        id: set_image_version_prod
         run: |
           echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
       - name: Print image version
         run: |
-          echo "Image version is [${{ steps.set_image_version.outputs.image_version }}]" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref_type }}" == "tag" ]]; then
+            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version.outputs.set_image_version_dev }}]" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version.outputs.set_image_version_prod }}]" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   trivy-scan:
     runs-on: 'ubuntu-latest'
