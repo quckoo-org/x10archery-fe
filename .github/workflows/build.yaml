@@ -99,13 +99,7 @@ jobs:
             "SHA_COMMIT=${{ env.short_sha }}"
             "BRANCH_NAME=${{ github.ref_name }}"
           push: true
-          tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ env.short_sha }}-dev, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest-dev
-
-      - name: Save [Development version] as output
-        if: ${{ inputs.environment == 'development' && github.ref_type != 'tag' }}
-        id: set_image_version_dev
-        run: |
-          echo "image_version=${{ env.short_sha }}-dev" >> $GITHUB_OUTPUT
+          tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ env.short_sha }}-dev, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest-dev``
 
       - name: Build and push Docker image [Production version]
         if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
@@ -118,18 +112,15 @@ jobs:
           push: true
           tags: ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ github.ref_name }}, ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:latest
 
-      - name: Save [Production version] as output
-        if: ${{ inputs.environment == 'production' && github.ref_type == 'tag' }}
-        id: set_image_version_prod
-        run: |
-          echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-
       - name: Print image version
+        id: set_image_version
         run: |
           if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref_type }}" == "tag" ]]; then
-            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version_dev.outputs.set_image_version }}]" >> "$GITHUB_STEP_SUMMARY"
+            echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "Image [${{ inputs.environment }}] version is [${{ github.ref_name }}]" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version_prod.outputs.set_image_version }}]" >> "$GITHUB_STEP_SUMMARY"
+            echo "image_version=${{ env.short_sha }}-dev" >> $GITHUB_OUTPUT
+            echo "Image [${{ inputs.environment }}] version is [${{ env.short_sha }}-dev]" >> "$GITHUB_STEP_SUMMARY"
           fi
 
   trivy-scan:
