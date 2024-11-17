@@ -142,7 +142,7 @@ jobs:
         id: scan
         continue-on-error: true
         env:
-          TRIVY_USERNAME: ${{ vars.DOCKER_USEHARBOR_ROBOT_TOKENRNAME_DEEPLAY }}
+          TRIVY_USERNAME: ${{ vars.HARBOR_ROBOT_TOKEN }}
           TRIVY_PASSWORD: ${{ secrets.HARBOR_ROBOT_NAME }}
         with:
           image-ref: "${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ needs.image_build_and_push.outputs.image_version }}"
