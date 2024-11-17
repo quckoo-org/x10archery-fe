@@ -127,9 +127,9 @@ jobs:
       - name: Print image version
         run: |
           if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref_type }}" == "tag" ]]; then
-            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version.outputs.set_image_version_dev }}]" >> "$GITHUB_STEP_SUMMARY"
+            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version_dev.outputs.set_image_version }}]" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version.outputs.set_image_version_prod }}]" >> "$GITHUB_STEP_SUMMARY"
+            echo "Image [${{ inputs.environment }}] version is [${{ steps.set_image_version_prod.outputs.set_image_version }}]" >> "$GITHUB_STEP_SUMMARY"
           fi
 
   trivy-scan:
