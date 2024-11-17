@@ -153,7 +153,7 @@ jobs:
       - name: Deploy
         env:
           CHART_VERSION: ${{ env.DEFAULT_VERSION_CHART }}-${{ needs.image_build_and_push.outputs.short_sha }}
-          IMAGE_TAG: ${{ needs.image_build_and_push.outputs.short_sha }}-dev
+          IMAGE_TAG: ${{ inputs.environment == 'production' && github.ref_type == 'tag' && github.ref_name || needs.image_build_and_push.outputs.short_sha + '-dev' }}
           ENVIRONMENT: ${{ inputs.environment }}
           SECRET_NAME: ${{ vars.SECRET_NAME }}
           HARBOR_ROBOT_NAME: ${{ vars.HARBOR_ROBOT_NAME }}
