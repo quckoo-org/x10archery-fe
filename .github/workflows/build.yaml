@@ -132,10 +132,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Harbor auth
-        run: |
-          echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
-
       - name: Trivy Cache
         uses: yogeshlonkar/trivy-cache-action@v0
         with:
@@ -146,8 +142,8 @@ jobs:
         id: scan
         continue-on-error: true
         env:
-          TRIVY_USERNAME: ${{ vars.HARBOR_ROBOT_TOKEN }}
-          TRIVY_PASSWORD: ${{ secrets.HARBOR_ROBOT_NAME }}
+          TRIVY_USERNAME: ${{ vars.HARBOR_ROBOT_NAME }}
+          TRIVY_PASSWORD: ${{ secrets.HARBOR_ROBOT_TOKEN }}
         with:
           image-ref: "${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT_NAME }}/${{ vars.APPLICATION_NAME }}:${{ needs.image_build_and_push.outputs.image_version }}"
           output: "trivy-results"
