@@ -132,6 +132,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Harbor auth
+        run: |
+          echo "${{ secrets.HARBOR_ROBOT_TOKEN }}" | helm registry login ${{ vars.HARBOR_HOST }} --username '${{ vars.HARBOR_ROBOT_NAME }}' --password-stdin
+
       - name: Trivy Cache
         uses: yogeshlonkar/trivy-cache-action@v0
         with:
