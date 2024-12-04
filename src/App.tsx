@@ -8,9 +8,10 @@ import Disciplines from './components/Disciplines.tsx';
 import Footer from './components/Footer';
 
 
+
 const App: React.FC = () => {
     return (
-        <MantineProvider >
+        <MantineProvider>
             <Header />
             <Hero />
             <Disciplines />
