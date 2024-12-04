@@ -1,15 +1,21 @@
-# base image
-FROM docker.io/node:20.18.0-alpine3.19 AS builder
+FROM node:22.11.0-alpine3.20 AS builder
 WORKDIR /app
 
 LABEL authors="alexanderdolgosheev@gmail.com"
 
-# install dependencies
+RUN corepack enable
+RUN corepack prepare yarn@4.5.1 --activate
+
+COPY .yarnrc.yml ./
 COPY package.json yarn.lock ./
-RUN yarn --frozen-lockfile
+
+RUN yarn install --immutable --inline-builds
+
 COPY . .
-RUN mkdir build
 RUN yarn build
+
+FROM node:22.11.0-alpine3.20 AS runner
+WORKDIR /app
 
 FROM ghcr.io/nginxinc/nginx-unprivileged:1.25.2-alpine-slim AS final
 WORKDIR /usr/share/nginx/html
