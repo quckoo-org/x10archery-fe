@@ -4,6 +4,7 @@ import GoogleLoginButton from "../GoogleLoginButton.tsx";
 
 interface HeaderProps {
     isLoggedIn: boolean;
+    onLogout: () => void;
     userInfo: any;
     setIsLoggedIn: (value: boolean) => void;
     setUserInfo: (value: any) => void;
@@ -31,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, userInfo, setIsLoggedIn, se
                 {isLoggedIn ? (
                     <Menu shadow="md" width={200}>
                         <Menu.Target>
-                            <Group spacing="xs" style={{ cursor: "pointer" }}>
+                            <Group style={{ cursor: "pointer" }}>
                                 <Avatar
                                     src={userInfo?.picture}
                                     alt={userInfo?.name}

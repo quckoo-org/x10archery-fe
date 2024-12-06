@@ -44,7 +44,6 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onLoginSuccess })
     return (
         <GoogleOAuthProvider clientId="393278966185-ouhepjfclvgi821qffhmvnsgqqcd79tr.apps.googleusercontent.com">
             <GoogleLogin
-                prompt="select_account"
                 text="continue_with"
                 onSuccess={handleLoginSuccess}
                 onError={handleLoginError}

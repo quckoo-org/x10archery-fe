@@ -6,7 +6,7 @@ import Header from './components/header/Header.tsx';
 import Hero from './components/Hero';
 import Disciplines from './components/Disciplines.tsx';
 import Footer from './components/footer/Footer.tsx';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 
 const GoogleCallback: React.FC = () => {
