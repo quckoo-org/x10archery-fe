@@ -12,7 +12,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --immutable --inline-builds
 
 COPY . .
-RUN yarn build
+RUN yarn build-unix
 
 FROM node:22.11.0-alpine3.20 AS runner
 WORKDIR /app
