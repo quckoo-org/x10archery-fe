@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "VITE_DEBUG=true vite",
-    "build": "tsc -b && vite build",
+    "dev-unix": "VITE_DEBUG=true vite",
+    "dev-win": "set VITE_DEBUG=true && vite",
+    "build-unix": "tsc -b && VITE_DEBUG=false vite build",
+    "build-win": "tsc -b && set VITE_DEBUG=false vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
