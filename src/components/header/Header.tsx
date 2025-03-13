@@ -1,29 +1,11 @@
-import React from "react";
-import { Avatar, Menu, Text, Group, Container, Title } from "@mantine/core";
-import GoogleLoginButton from "../GoogleLoginButton.tsx";
+// Header.tsx
+import React from 'react';
+import {Avatar, Menu, Text, Group, Container, Title} from "@mantine/core";
+import { useAuth } from '../../contexts/AuthContext';
+import GoogleLoginCallBack from "../google/GoogleLoginCallBack.tsx";
 
-interface HeaderProps {
-    isLoggedIn: boolean;
-    onLogout: () => void;
-    userInfo: any;
-    setIsLoggedIn: (value: boolean) => void;
-    setUserInfo: (value: any) => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, userInfo, setIsLoggedIn, setUserInfo }) => {
-    const handleLogout = () => {
-        // Удаляем данные из localStorage
-        localStorage.removeItem("googleToken");
-
-        // Сбрасываем состояние пользователя
-        setIsLoggedIn(false);
-        setUserInfo(null);
-    };
-
-    const handleGoogleLoginSuccess = (userInfo: any) => {
-        setIsLoggedIn(true);
-        setUserInfo(userInfo); // Сохраняем данные пользователя
-    };
+const Header: React.FC = () => {
+    const { isLoggedIn, userInfo, setIsLoggedIn } = useAuth();
 
     return (
         <Container style={{ padding: "20px 0", display: "flex", justifyContent: "space-between" }}>
@@ -46,13 +28,13 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, userInfo, setIsLoggedIn, se
                             </Group>
                         </Menu.Target>
                         <Menu.Dropdown>
-                            <Menu.Item onClick={handleLogout} color="red">
+                            <Menu.Item onClick={()=> setIsLoggedIn(false)} color="red">
                                 Выйти
                             </Menu.Item>
                         </Menu.Dropdown>
                     </Menu>
                 ) : (
-                    <GoogleLoginButton onLoginSuccess={handleGoogleLoginSuccess} />
+                    <GoogleLoginCallBack />
                 )}
             </Group>
         </Container>
